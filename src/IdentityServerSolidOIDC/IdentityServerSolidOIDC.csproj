@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Duende.IdentityServer" Version="6.3.0-preview.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\IdentityServer\src\IdentityServer\Duende.IdentityServer.csproj" />
+    <PackageReference Include="Duende.IdentityServer" Version="6.3.0-preview.1.1" />
   </ItemGroup>
 
 </Project>
