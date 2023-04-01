@@ -38,10 +38,8 @@ namespace IdentityServerSolidOIDC.SolidOIDC.Services
             _claimsService = claimsService;
         }
 
-        public override async Task<Token> CreateIdentityTokenAsync(TokenCreationRequest request)
+        private async Task<Token> AddSolidClaims(Token token, TokenCreationRequest request)
         {
-            var token = await base.CreateIdentityTokenAsync(request);
-
             if (_options.Solid.Enabled)
             {
                 // add azp and webid claims
@@ -70,6 +68,18 @@ namespace IdentityServerSolidOIDC.SolidOIDC.Services
             }
 
             return token;
+        }
+
+        public override async Task<Token> CreateIdentityTokenAsync(TokenCreationRequest request)
+        {
+            var token = await base.CreateIdentityTokenAsync(request);
+            return await AddSolidClaims(token, request);
+        }
+
+        public override async Task<Token> CreateAccessTokenAsync(TokenCreationRequest request)
+        {
+            var token = await base.CreateAccessTokenAsync(request);
+            return await AddSolidClaims(token, request);           
         }
     }
 }
