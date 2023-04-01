@@ -27,23 +27,27 @@ public class ClientIdUriHttpClient
         var response = await _httpClient.SendAsync(req);
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var contentStream = await response.Content.ReadAsStreamAsync();                
+            var contentStream = await response.Content.ReadAsStreamAsync();
             var clientIdDocument = JsonSerializer.Deserialize<JsonElement>(contentStream);
-            var client = new Client();
-            client.ClientId = clientIdDocument.GetString("client_id");
-            client.ClientName = clientIdDocument.GetString("client_name");
-            client.RedirectUris = new Collection<string>(clientIdDocument.TryGetStringArray("redirect_uris").ToList());
-            client.AllowedGrantTypes = new Collection<string>(clientIdDocument.TryGetStringArray("grant_types").ToList());
             var scopes = new List<string>((clientIdDocument.GetString("scope") ?? "").Split(" "));
             scopes.Add("profile");
-            client.AllowedScopes =  new Collection<string>(scopes);
-            client.AllowOfflineAccess = true;
-            client.RequireClientSecret = false;
-            client.AllowRememberConsent = true;
-            client.RequireConsent = true;
-            client.AllowPlainTextPkce = false;
-            client.RequirePkce = true;
-            client.RequireDPoP = true;
+            var client = new Client()
+            {
+                ClientId = clientIdDocument.GetString("client_id"),
+                ClientName = clientIdDocument.GetString("client_name"),
+                RedirectUris = new Collection<string>(clientIdDocument.TryGetStringArray("redirect_uris").ToList()),
+                AllowedGrantTypes = new Collection<string>(clientIdDocument.TryGetStringArray("grant_types").ToList()),
+                AllowedIdentityTokenSigningAlgorithms = { "ES256" },
+                AllowedScopes = new Collection<string>(scopes),
+                AllowOfflineAccess = true,
+                RequireClientSecret = false,
+                AllowRememberConsent = true,
+                RequireConsent = true,
+                AllowPlainTextPkce = false,
+                RequirePkce = true,
+                RequireDPoP = true
+            };
+
             return client;
         }
         return null;
